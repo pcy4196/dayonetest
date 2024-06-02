@@ -1,6 +1,7 @@
 package com.pcy.dayonetest;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MyCalculatorTest {
 
     @Test
+    @DisplayName("MyCalculator 덧셈 테스트")
     void addTest() {
         // AAA 패턴
         // Arrange - 준비
@@ -19,6 +21,7 @@ class MyCalculatorTest {
     }
 
     @Test
+    @DisplayName("MyCalculator 뺄셈 테스트")
     void minus() {
         // GWT 패턴
         // Given - 준비
@@ -30,6 +33,7 @@ class MyCalculatorTest {
     }
 
     @Test
+    @DisplayName("MyCalculator 곱셈 테스트")
     void multiply() {
         // Given
         MyCalculator myCalculator = new MyCalculator(10.0);
@@ -40,6 +44,7 @@ class MyCalculatorTest {
     }
 
     @Test
+    @DisplayName("MyCalculator 나눗셈 테스트")
     void divide() {
         // Given
         MyCalculator myCalculator = new MyCalculator(10.0);
@@ -50,6 +55,7 @@ class MyCalculatorTest {
     }
 
     @Test
+    @DisplayName("MyCalculator 사칙연산 테스트")
     void complicatedCalculateTest() {
         // given
         MyCalculator myCalculator = new MyCalculator();
@@ -67,6 +73,7 @@ class MyCalculatorTest {
     }
 
     @Test
+    @DisplayName("0으로 나눗셈할때 ZeroDivisionException 발생여부 확인")
     void divideZeroTest() {
         // given
         MyCalculator myCalculator = new MyCalculator(10.0);
