@@ -1,11 +1,18 @@
 package com.pcy.dayonetest.service;
 
+import com.pcy.dayonetest.controller.response.ExamFailStudentResponse;
+import com.pcy.dayonetest.controller.response.ExamPassStudentResponse;
+import com.pcy.dayonetest.model.StudentFail;
+import com.pcy.dayonetest.model.StudentPass;
 import com.pcy.dayonetest.repository.StudentFailRepository;
 import com.pcy.dayonetest.repository.StudentPassRepository;
 import com.pcy.dayonetest.repository.StudentScoreRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.List;
 
 public class StudentScoreServiceMockTest {
 
@@ -73,7 +80,7 @@ public class StudentScoreServiceMockTest {
     @Test
     @DisplayName("성적 저장 로직 검증 / 60점 미만인 경우")
     public void saveScoreMockTes2t() {
-        // given : 평균 점수가 60점 이상인 경우
+        // given : 평균 점수가 60점 미만인 경우
         StudentFailRepository studentFailRepository = Mockito.mock(StudentFailRepository.class);
         StudentScoreRepository studentScoreRepository = Mockito.mock(StudentScoreRepository.class);
         StudentPassRepository studentPassRepository = Mockito.mock(StudentPassRepository.class);
@@ -103,5 +110,82 @@ public class StudentScoreServiceMockTest {
         Mockito.verify(studentScoreRepository, Mockito.times(1)).save(Mockito.any());
         Mockito.verify(studentPassRepository, Mockito.times(0)).save(Mockito.any());
         Mockito.verify(studentFailRepository, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("합격자 명단 조회 검증")
+    public void getPassStudentsListTest() {
+        // given
+        StudentFailRepository studentFailRepository = Mockito.mock(StudentFailRepository.class);
+        StudentScoreRepository studentScoreRepository = Mockito.mock(StudentScoreRepository.class);
+        StudentPassRepository studentPassRepository = Mockito.mock(StudentPassRepository.class);
+
+        StudentScoreService studentScoreService = new StudentScoreService(
+                studentFailRepository,
+                studentScoreRepository,
+                studentPassRepository
+        );
+
+        String givenTestExam = "testexam";
+
+        StudentPass es1 =  StudentPass.builder().id(1L).studentName("pcy").exam(givenTestExam).avgScore(70.0).build();
+        StudentPass es2 =  StudentPass.builder().id(2L).studentName("test").exam(givenTestExam).avgScore(80.0).build();
+        StudentPass nes1 =  StudentPass.builder().id(3L).studentName("test").exam("mathexam").avgScore(90.0).build();
+
+
+        // 가짜 데이터 생성
+        Mockito.when(studentPassRepository.findAll()).thenReturn(List.of(
+                es1,
+                es2,
+                nes1
+        ));
+
+        // when
+        List<ExamPassStudentResponse> expectResponses = List.of(es1, es2)
+                .stream()
+                .map((pass) -> new ExamPassStudentResponse(pass.getStudentName(), pass.getAvgScore()))
+                .toList();
+        List<ExamPassStudentResponse> responses = studentScoreService.getPassStudentsList(givenTestExam);
+
+        // then
+        Assertions.assertIterableEquals(expectResponses, responses);
+    }
+
+    @Test
+    @DisplayName("불합격자 명단 조회 검증")
+    public void getFailStudentsListTest() {
+        // given
+        StudentFailRepository studentFailRepository = Mockito.mock(StudentFailRepository.class);
+        StudentScoreRepository studentScoreRepository = Mockito.mock(StudentScoreRepository.class);
+        StudentPassRepository studentPassRepository = Mockito.mock(StudentPassRepository.class);
+
+        StudentScoreService studentScoreService = new StudentScoreService(
+                studentFailRepository,
+                studentScoreRepository,
+                studentPassRepository
+        );
+
+        String givenTestExam = "testexam";
+
+        StudentFail es1 =  StudentFail.builder().id(1L).studentName("pcy").exam(givenTestExam).avgScore(40.0).build();
+        StudentFail es2 =  StudentFail.builder().id(2L).studentName("test").exam(givenTestExam).avgScore(50.0).build();
+        StudentFail nes1 =  StudentFail.builder().id(3L).studentName("test").exam("mathexam").avgScore(55.0).build();
+
+        // 가짜 데이터 생성
+        Mockito.when(studentFailRepository.findAll()).thenReturn(List.of(
+                es1,
+                es2,
+                nes1
+        ));
+
+        // when
+        List<ExamFailStudentResponse> expectResponses = List.of(es1, es2)
+                .stream()
+                .map((pass) -> new ExamFailStudentResponse(pass.getStudentName(), pass.getAvgScore()))
+                .toList();
+        List<ExamFailStudentResponse> responses = studentScoreService.getFailStudentsList(givenTestExam);
+
+        // then
+        Assertions.assertIterableEquals(expectResponses, responses);
     }
 }
