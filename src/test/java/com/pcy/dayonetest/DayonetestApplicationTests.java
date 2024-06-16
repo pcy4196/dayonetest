@@ -3,7 +3,6 @@ package com.pcy.dayonetest;
 import com.pcy.dayonetest.model.StudentScore;
 import com.pcy.dayonetest.model.StudentScoreTestDataBuilder;
 import com.pcy.dayonetest.repository.StudentScoreRepository;
-import com.pcy.dayonetest.service.StudentScoreService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
